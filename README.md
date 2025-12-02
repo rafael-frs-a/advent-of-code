@@ -1,3 +1,3 @@
 # About
 
-My solutions to the problems from the [Advent of code](https://adventofcode.com).
+My solutions to the problems from the [Advent of Code](https://adventofcode.com).

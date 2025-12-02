@@ -1,0 +1,8 @@
+# Python cache
+__pycache__/
+
+# Python local virtualenv folder
+venv/
+
+# Input files
+input.txt
