@@ -6,7 +6,7 @@ https://adventofcode.com/2025/day/4
 
 ## Solution
 
-To solve this problem, we simply walk through each space in the diagram and, if it's a roll of paper, count how many adjacent rolls of paper it has. If the count reaches the limit of 4, we skip to the next space. We then add those that stay below the limit to the result.
+To solve this problem, we simply walk through each space in the diagram and, if it's a roll of paper, count how many adjacent rolls of paper it has. If the count reaches the limit of four, we skip to the next space. We then add those that stay below the limit to the result.
 
 ## Instructions
 
