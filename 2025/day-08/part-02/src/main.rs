@@ -9,16 +9,14 @@ struct Node {
     z: i64,
 }
 
-struct Edge {
-    a_idx: usize,
-    b_idx: usize,
+struct Edge<'a> {
+    a: &'a Node,
+    b: &'a Node,
     weight: f64,
 }
 
-impl Edge {
-    fn new(a_idx: usize, b_idx: usize, nodes: &[Node]) -> Self {
-        let a = &nodes[a_idx];
-        let b = &nodes[b_idx];
+impl<'a> Edge<'a> {
+    fn new(a: &'a Node, b: &'a Node) -> Self {
         let dx = a.x - b.x;
         let dy = a.y - b.y;
         let dz = a.z - b.z;
@@ -26,50 +24,46 @@ impl Edge {
         // Euclidean distance
         let weight = ((dx * dx + dy * dy + dz * dz) as f64).sqrt();
 
-        Self {
-            a_idx,
-            b_idx,
-            weight,
-        }
+        Self { a, b, weight }
     }
 }
 
-struct DisjointSet {
-    roots: HashMap<usize, usize>,
+struct DisjointSet<'a> {
+    roots: HashMap<&'a Node, &'a Node>,
     n_islands: usize,
 }
 
-impl DisjointSet {
-    fn new(n_nodes: usize) -> Self {
-        let roots = (0..n_nodes).map(|n| (n, n)).collect();
-        let n_islands = n_nodes;
+impl<'a> DisjointSet<'a> {
+    fn new(nodes: &'a [Node]) -> Self {
+        let roots = nodes.iter().map(|n| (n, n)).collect();
+        let n_islands = nodes.len();
 
         Self { roots, n_islands }
     }
 
-    fn find(&self, node_idx: usize) -> usize {
-        let mut node_idx = node_idx;
+    fn find(&self, node: &'a Node) -> &'a Node {
+        let mut node = node;
 
         loop {
-            let root_idx = self.roots[&node_idx];
+            let root = self.roots[node];
 
-            if root_idx == node_idx {
-                break node_idx;
+            if root == node {
+                break node;
             }
 
-            node_idx = root_idx;
+            node = root;
         }
     }
 
-    fn union(&mut self, a_idx: usize, b_idx: usize) {
-        let root_a_idx = self.find(a_idx);
-        let root_b_idx = self.find(b_idx);
+    fn union(&mut self, a: &'a Node, b: &'a Node) {
+        let root_a = self.find(a);
+        let root_b = self.find(b);
 
-        if root_a_idx == root_b_idx {
+        if root_a == root_b {
             return;
         }
 
-        self.roots.insert(root_a_idx, root_b_idx);
+        self.roots.insert(root_a, root_b);
         self.n_islands -= 1;
     }
 }
@@ -90,20 +84,22 @@ fn main() {
 
     for idx_a in 0..nodes.len() {
         for idx_b in idx_a + 1..nodes.len() {
-            edges.push(Edge::new(idx_a, idx_b, &nodes));
+            let a = &nodes[idx_a];
+            let b = &nodes[idx_b];
+            edges.push(Edge::new(a, b));
         }
     }
 
     edges.sort_by(|a, b| a.weight.total_cmp(&b.weight));
 
     // Merge edges
-    let mut disjoint_set = DisjointSet::new(nodes.len());
+    let mut disjoint_set = DisjointSet::new(&nodes);
 
     for edge in edges {
-        disjoint_set.union(edge.a_idx, edge.b_idx);
+        disjoint_set.union(edge.a, edge.b);
 
         if disjoint_set.n_islands == 1 {
-            println!("{}", nodes[edge.a_idx].x * nodes[edge.b_idx].x);
+            println!("{}", edge.a.x * edge.b.x);
             break;
         }
     }
