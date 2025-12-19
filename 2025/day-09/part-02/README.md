@@ -6,7 +6,7 @@ https://adventofcode.com/2025/day/9#part2
 
 ## Solution
 
-To solve part two, we first need to assume the orthogonal polygon made from the provided list of vertices is convex. That means we don't have to worry about concave shapes such as the one below:
+To solve part two, we first need to assume the orthogonal polygon made from the provided list of vertices only has horizontal concavities. That means we don't have to worry about concave shapes such as the one below:
 
 ```
 ............
